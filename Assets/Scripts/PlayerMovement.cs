@@ -11,7 +11,8 @@ public class PlayerMovement : MonoBehaviour
     private float inputAxis;
 
     // Configuración.
-    public float moveSpeed = 8f;
+    public float speed = 8f;
+    private float moveSpeed;
     public float maxJumpHeight = 5f;
     public float maxJumpTime = 1f;
     public float jumpForce => (2f * maxJumpHeight) / (maxJumpTime / 2f);
@@ -115,15 +116,24 @@ public class PlayerMovement : MonoBehaviour
 
     private void GroundedMovement()
     {
-        // prevent gravity from infinitly building up
+        // Evita que la gravedad se acumule indefinidamente
         velocity.y = Mathf.Max(velocity.y, 0f);
         jumping = velocity.y > 0f;
 
-        // perform jump
+        // Hace saltar a Mario
         if (Input.GetButtonDown("Jump"))
         {
             velocity.y = jumpForce;
             jumping = true;
+        }
+
+        if (Input.GetButton("Run"))
+        {
+            moveSpeed = speed * 1.5f;
+        }
+        else
+        {
+            moveSpeed = speed;
         }
     }
 
