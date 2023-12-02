@@ -3,23 +3,32 @@ using UnityEngine;
 
 public class Pipe : MonoBehaviour
 {
+    // Configuraciones.
     public Transform connection;
     public KeyCode enterKeyCode = KeyCode.S;
     public Vector3 enterDirection = Vector3.down;
     public Vector3 exitDirection = Vector3.zero;
 
+    /**
+     * Si mientras el jugador se encuentra junto a la tubería pulsa la tecla indicada.
+     */
     private void OnTriggerStay2D(Collider2D other)
     {
         if (connection != null && other.CompareTag("Player"))
         {
             if (Input.GetKey(enterKeyCode)) {
+                // Comienza la animación.
                 StartCoroutine(Enter(other.transform));
             }
         }
     }
 
+    /**
+     * Animación de entrar en la tubería.
+     */
     private IEnumerator Enter(Transform player)
     {
+        // Evita el movimiento del jugador.
         player.GetComponent<PlayerMovement>().enabled = false;
 
         Vector3 enteredPosition = transform.position + enterDirection;
@@ -28,6 +37,7 @@ public class Pipe : MonoBehaviour
         yield return Move(player, enteredPosition, enteredScale);
         yield return new WaitForSeconds(1f);
 
+        // Mueve la camara a la posición final de la tubería.
         var sideSrolling = Camera.main.GetComponent<SideScrolling>();
         sideSrolling.SetUnderground(connection.position.y < sideSrolling.undergroundThreshold);
 
@@ -45,6 +55,9 @@ public class Pipe : MonoBehaviour
         player.GetComponent<PlayerMovement>().enabled = true;
     }
 
+    /**
+     * Mueve al jugador de un punto a otro.
+     */
     private IEnumerator Move(Transform player, Vector3 endPosition, Vector3 endScale)
     {
         float elapsed = 0f;

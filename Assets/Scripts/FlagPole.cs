@@ -3,13 +3,18 @@ using UnityEngine;
 
 public class FlagPole : MonoBehaviour
 {
+    // Componentes de posición, rotación y escalado
     public Transform flag;
     public Transform poleBottom;
     public Transform castle;
+    // Configuración
     public float speed = 6f;
     public int nextWorld = 1;
     public int nextStage = 1;
 
+    /**
+     * Si el jugador toca la bandera, hace la animación de bajar y después de completar el nivel.
+     */
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
@@ -19,6 +24,9 @@ public class FlagPole : MonoBehaviour
         }
     }
 
+    /**
+     * Mueve el jugador hacia el castillo y pasa de nivel.
+     */
     private IEnumerator LevelCompleteSequence(Transform player)
     {
         player.GetComponent<PlayerMovement>().enabled = false;
@@ -35,6 +43,9 @@ public class FlagPole : MonoBehaviour
         GameManager.Instance.LoadLevel(nextWorld, nextStage);
     }
 
+    /**
+     * Hace el desplazamiento de un objeto a una posición.
+     */
     private IEnumerator MoveTo(Transform subject, Vector3 position)
     {
         while (Vector3.Distance(subject.position, position) > 0.125f)

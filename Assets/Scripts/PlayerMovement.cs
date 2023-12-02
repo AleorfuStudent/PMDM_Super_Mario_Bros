@@ -10,18 +10,23 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 velocity;
     private float inputAxis;
 
+    // Configuración.
     public float moveSpeed = 8f;
     public float maxJumpHeight = 5f;
     public float maxJumpTime = 1f;
     public float jumpForce => (2f * maxJumpHeight) / (maxJumpTime / 2f);
     public float gravity => (-2f * maxJumpHeight) / Mathf.Pow(maxJumpTime / 2f, 2f);
 
+    // Estados del jugador.
     public bool grounded { get; private set; }
     public bool jumping { get; private set; }
     public bool running => Mathf.Abs(velocity.x) > 0.25f || Mathf.Abs(inputAxis) > 0.25f;
     public bool sliding => (inputAxis > 0f && velocity.x < 0f) || (inputAxis < 0f && velocity.x > 0f);
     public bool falling => velocity.y < 0f && !grounded;
 
+    /**
+     * Al instanciarse el objeto que contiene el script obtiene los componentes necesarios.
+     */
     private void Awake()
     {
         camera = Camera.main;
@@ -29,6 +34,10 @@ public class PlayerMovement : MonoBehaviour
         collider = GetComponent<Collider2D>();
     }
 
+    /**
+     * Esta función se ejecuta al habilitar el script.
+     * Inicializa parte del personaje.
+     */
     private void OnEnable()
     {
         rigidbody.isKinematic = false;
@@ -37,6 +46,10 @@ public class PlayerMovement : MonoBehaviour
         jumping = false;
     }
 
+    /**
+     * Esta función se ejecuta al desabilitar el script.
+     * Deshabilita parte del personaje.
+     */
     private void OnDisable()
     {
         rigidbody.isKinematic = true;
@@ -45,6 +58,10 @@ public class PlayerMovement : MonoBehaviour
         jumping = false;
     }
 
+    /**
+     * Esta función se ejecuta cada frame.
+     * Controla el movimiento del jugador en su mayoría.
+     */
     private void Update()
     {
         HorizontalMovement();
@@ -58,13 +75,15 @@ public class PlayerMovement : MonoBehaviour
         ApplyGravity();
     }
 
+    /**
+     * Esta función se ejecuta manteniendo una lógica, para que sin importar de los frames, se ejecute siempre a la misma velocidad.
+     */
     private void FixedUpdate()
     {
-        // move mario based on his velocity
+        // Mueve a mario dependiendo de su velocidad.
         Vector2 position = rigidbody.position;
         position += velocity * Time.fixedDeltaTime;
-
-        // clamp within the screen bounds
+        // Mantiene el personaje dentro de la camara.
         Vector2 leftEdge = camera.ScreenToWorldPoint(Vector2.zero);
         Vector2 rightEdge = camera.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height));
         position.x = Mathf.Clamp(position.x, leftEdge.x + 0.5f, rightEdge.x - 0.5f);
@@ -72,18 +91,21 @@ public class PlayerMovement : MonoBehaviour
         rigidbody.MovePosition(position);
     }
 
+    /**
+     * Se encarga de los movimientos horizontales del jugador.
+     */
     private void HorizontalMovement()
     {
-        // accelerate / decelerate
+        // Acelera y desacelera.
         inputAxis = Input.GetAxis("Horizontal");
         velocity.x = Mathf.MoveTowards(velocity.x, inputAxis * moveSpeed, moveSpeed * Time.deltaTime);
 
-        // check if running into a wall
+        // Verifica si estás corriendo contra una pared.
         if (rigidbody.Raycast(Vector2.right * velocity.x)) {
             velocity.x = 0f;
         }
 
-        // flip sprite to face direction
+        // Hace al sprite mirar hacia donde anda el personaje.
         if (velocity.x > 0f) {
             transform.eulerAngles = Vector3.zero;
         } else if (velocity.x < 0f) {
@@ -105,22 +127,30 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    /**
+     * Aplica la gravedad al jugador.
+     */
     private void ApplyGravity()
     {
-        // check if falling
+        // Verifica si está callendo el jugador.
         bool falling = velocity.y < 0f || !Input.GetButton("Jump");
         float multiplier = falling ? 2f : 1f;
 
-        // apply gravity and terminal velocity
+        // Aplica la gravedad.
         velocity.y += gravity * multiplier * Time.deltaTime;
         velocity.y = Mathf.Max(velocity.y, gravity / 2f);
     }
 
+    /**
+     * Al colisionar con algo...
+     * Si es un enemigo por arriba, el jugador rebota.
+     * Si toca el techo con la cabeza, empieza a caer.
+     */
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
-            // bounce off enemy head
+            // Rebota en la cabeza de un enemigo.
             if (transform.DotTest(collision.transform, Vector2.down))
             {
                 velocity.y = jumpForce / 2f;
@@ -129,7 +159,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (collision.gameObject.layer != LayerMask.NameToLayer("PowerUp"))
         {
-            // stop vertical movement if mario bonks his head
+            // Si choco con algo por encima dejo de subir.
             if (transform.DotTest(collision.transform, Vector2.up)) {
                 velocity.y = 0f;
             }

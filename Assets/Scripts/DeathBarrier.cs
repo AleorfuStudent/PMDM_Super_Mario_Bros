@@ -3,6 +3,11 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider2D))]
 public class DeathBarrier : MonoBehaviour
 {
+
+    /**
+     * Al ser tocada por el jugador, reinicia el nivel.
+     * Al ser tocada por otro objeto, lo destruye.
+     */
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
