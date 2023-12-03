@@ -6,6 +6,8 @@ public class EntityMovement : MonoBehaviour
 {
     public float speed = 1f;
     public Vector2 direction = Vector2.left;
+    public float distance = 0.375f;
+    public float gravity = -9.8f;
 
     private new Rigidbody2D rigidbody;
     private Vector2 velocity;
@@ -44,15 +46,15 @@ public class EntityMovement : MonoBehaviour
     private void FixedUpdate()
     {
         velocity.x = direction.x * speed;
-        velocity.y += Physics2D.gravity.y * Time.fixedDeltaTime;
+        velocity.y += gravity * Time.fixedDeltaTime;
 
         rigidbody.MovePosition(rigidbody.position + velocity * Time.fixedDeltaTime);
 
-        if (rigidbody.Raycast(direction)) {
+        if (rigidbody.Raycast(direction, distance)) {
             direction = -direction;
         }
 
-        if (rigidbody.Raycast(Vector2.down)) {
+        if (rigidbody.Raycast(Vector2.down, distance)) {
             velocity.y = Mathf.Max(velocity.y, 0f);
         }
 

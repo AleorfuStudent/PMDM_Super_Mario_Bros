@@ -17,7 +17,8 @@ public class BlockHit : MonoBehaviour
     {
         if (!animating && maxHits != 0 && collision.gameObject.CompareTag("Player"))
         {
-            if (collision.transform.DotTest(transform, Vector2.up)) {
+            if (collision.transform.DotTest(transform, Vector2.up)) 
+            {
                 Hit();
             }
         }

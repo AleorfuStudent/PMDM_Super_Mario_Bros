@@ -62,9 +62,15 @@ public class DeathAnimation : MonoBehaviour
 
         GetComponent<Rigidbody2D>().isKinematic = true;
 
+        BossBehaviour bossBehaviour = GetComponent<BossBehaviour>();
         PlayerMovement playerMovement = GetComponent<PlayerMovement>();
         EntityMovement entityMovement = GetComponent<EntityMovement>();
 
+        // Desactiva el script del comportamiento del boss.
+        if (bossBehaviour != null ) 
+        {
+            bossBehaviour.enabled = false;        
+        }
         // Desactiva el script de movimento del jugador.
         if (playerMovement != null) {
             playerMovement.enabled = false;

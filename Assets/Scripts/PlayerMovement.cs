@@ -67,7 +67,7 @@ public class PlayerMovement : MonoBehaviour
     {
         HorizontalMovement();
 
-        grounded = rigidbody.Raycast(Vector2.down);
+        grounded = rigidbody.Raycast(Vector2.down, 0.375f);
 
         if (grounded) {
             GroundedMovement();
@@ -102,7 +102,7 @@ public class PlayerMovement : MonoBehaviour
         velocity.x = Mathf.MoveTowards(velocity.x, inputAxis * moveSpeed, moveSpeed * Time.deltaTime);
 
         // Verifica si estás corriendo contra una pared.
-        if (rigidbody.Raycast(Vector2.right * velocity.x)) {
+        if (rigidbody.Raycast(Vector2.right * velocity.x, 0.375f)) {
             velocity.x = 0f;
         }
 

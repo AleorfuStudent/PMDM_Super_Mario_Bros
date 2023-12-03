@@ -8,14 +8,13 @@ public static class Extensions
     /**
      * Esta función se encarga de generar un rayo que verifica la existencia de objetos en la dirección y distancia dadas.
      */
-    public static bool Raycast(this Rigidbody2D rigidbody, Vector2 direction)
+    public static bool Raycast(this Rigidbody2D rigidbody, Vector2 direction, float distance)
     {
         if (rigidbody.isKinematic) {
             return false;
         }
 
         float radius = 0.25f;
-        float distance = 0.375f;
 
         // Aquí genera el rayo en forma de circulo, se encuentra inicialmente en la posición del jugador, con cierto radio, dirigiendose a cierta dirección,
         // a cierta distancia y solo respondiendo a cierta capa.
